@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+npm-debug.log
+
+# Playwright generated files
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Local media output (so you don't commit test screenshots/videos)
+*.png
+*.jpg
+*.jpeg
+*.webm
+*.pdf
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
