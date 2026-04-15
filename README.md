@@ -1,81 +1,59 @@
-# Playwright Setup Guide
+# Playwright Test Automation Setup
 
-This guide covers how to set up Playwright from scratch and how to run your first automated tests.
+Hey! Welcome to the project. I've set up the base for our Playwright automation framework. 
+This guide will walk you through getting everything installed on your machine and how to run your first tests so you can start writing your own scripts right away.
 
-## 1. Initializing the Project
+## 1. Getting Started (Installation)
 
-Playwright requires an initialized Node.js project to handle your dependencies. Start an empty project and install Playwright.
+Before you can run anything, you need to pull down the project dependencies. Make sure you have Node.js installed, then run this in your terminal:
 
-In your terminal or command prompt, run:
 ```bash
-# 1. Initialize a package.json file with default values
-npm init -y
+# 1. Install all the required packages (Playwright) that are listed in package.json
+npm install
 
-# 2. Install Playwright as a development dependency
-npm install -D @playwright/test
-
-# 3. Install the default browser binaries (like Chromium) that Playwright needs to operate
+# 2. Download the browser binaries (like Chromium) that Playwright needs to actually open web pages
 npx playwright install chromium --with-deps
 ```
 
-## 2. Setting Up the Configuration 
+*(Note: If you ever need to set up a brand new project from scratch down the line, the commands I used to initialize this were `npm init -y` followed by `npm install -D @playwright/test`.)*
 
-By default, Playwright uses Chromium to run tests headlessly (invisibly). To configure its behavior properly, create a file named `playwright.config.js` in the root of your project:
+## 2. How Everything is Configured
 
-```javascript
-const { defineConfig, devices } = require('@playwright/test');
+Take a look at the `playwright.config.js` file I created in the root folder. This is the brain of our setup.
 
-module.exports = defineConfig({
-  testDir: './tests', // Folder where tests should be stored
-  timeout: 45000,     // Maximum test runtime
-  
-  use: {
-    headless: false,  // Set to true if you don't want browsers visually popping up
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-  },
+By default, I've set it up to run tests **headlessly** (invisibly in the background) to make test execution faster, but you can easily change `headless: false` in the config if you want to visually watch the browser pop up during your runs. 
 
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
-});
+I've also configured it to:
+- Look for all our test scripts in the `./tests` directory.
+- Use **Chromium** as the default testing browser.
+- Automatically take a screenshot and retain a trace video *only if a test fails* (this saves disk space!).
+
+## 3. Our Test Scripts
+
+I've structured the project so all test scripts live in the `tests/` folder and end in `.spec.js`. 
+
+Right now, you can check out `resumen.spec.js` as an example. It navigates to La Republica, waits for the DOM to load, and extracts the top headlines from the `h2` and `h3` tags by running Javascript directly in the browser context via `page.evaluate()`. 
+
+When you write a new test, feel free to use that script as a template to see how to import `test` and `expect`.
+
+## 4. Running the Tests
+
+Here is how you can execute the code from your terminal:
+
+**Run all tests normally:**
+```bash
+npx playwright test
 ```
 
-## 3. Writing Your First Test
-
-Playwright test files are typically placed in the `tests/` directory with names ending in `.spec.js`. 
-
-Here’s an example `tests/resumen.spec.js` that loads a page and takes a screenshot:
-
-```javascript
-const { test, expect } = require('@playwright/test');
-
-test('Load La Republica page', async ({ page }) => {
-  // 1. Navigate to the URL
-  await page.goto('https://larepublica.pe/');
-
-  // 2. Take a screenshot to prove we got there
-  await page.screenshot({ path: 'larepublica.png', fullPage: true });
-
-  console.log('Successfully navigated to the La Republica page and took a screenshot!');
-});
-```
-
-## 4. Running Your Tests
-
-Playwright provides excellent command-line tools to execute tests:
-
-**Standard Run:**
-This will execute the test in the terminal and follow your `playwright.config.js` settings:
+**Run a specific file:**
 ```bash
 npx playwright test tests/resumen.spec.js
 ```
 
-**UI Mode (Debugging):**
-If you want to view a visual debugger, trace the test step-by-step, and explore the DOM visually:
+**The UI Debugger (Highly Recommended!):**
+If a test is failing or you are actively writing a new test, use the UI mode. It opens a visual debugger that lets you step through the code line-by-line, inspect the DOM, and see exactly what Playwright sees in real-time. It's a lifesaver.
 ```bash
 npx playwright test --ui
 ```
+
+If you have any questions or run into issues getting this set up on your machine, just let me know and we can pair on it!
