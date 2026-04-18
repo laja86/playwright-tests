@@ -13,6 +13,14 @@ class LaRepublicaPage {
     this.headlineElements = page.locator('h2');
   }
 
+  /**
+   * Returns a locator for a main menu category based on its visible text.
+   * @param {string} categoryName 
+   */
+  getMenuCategory(categoryName) {
+    return this.page.locator('header a').filter({ hasText: categoryName }).first();
+  }
+
   async goto() {
     await this.page.goto(this.url);
     await this.page.waitForLoadState('domcontentloaded');

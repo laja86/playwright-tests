@@ -37,4 +37,35 @@ test.describe('La Republica Desktop Tests', () => {
     console.log('Successfully returned to the homepage via POM.');
   });
 
+  test('Navigate through primary categories and verify URLs', async ({ page }, testInfo) => {
+    const laRepublica = new LaRepublicaPage(page);
+    await laRepublica.goto();
+
+    const categories = [
+      { name: 'LO ÚLTIMO', expectedUrl: '/ultimas-noticias' },
+      { name: 'ELECCIONES', expectedUrl: '/elecciones' },
+      { name: 'POLÍTICA', expectedUrl: '/politica' },
+      { name: 'OPINIÓN', expectedUrl: '/opinion' },
+      { name: 'ECONOMÍA', expectedUrl: '/economia' },
+    ];
+
+    for (const category of categories) {
+      // Return to home before each click to ensure menu is consistent
+      await laRepublica.goto();
+      
+      const menuButton = laRepublica.getMenuCategory(category.name);
+      
+      // Navigate and verify
+      await menuButton.click();
+      await expect(page).toHaveURL(new RegExp(category.expectedUrl));
+
+      // Capture and attach screenshot to the HTML report
+      const screenshotName = `cat_${category.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, '_')}`;
+      const screenshot = await page.screenshot();
+      await testInfo.attach(screenshotName, { body: screenshot, contentType: 'image/png' });
+      
+      console.log(`Successfully navigated to: ${category.name}`);
+    }
+  });
+
 });
