@@ -4,6 +4,9 @@ module.exports = defineConfig({
   // Look for test files in the "tests" directory
   testDir: './tests',
 
+  // Use the HTML reporter
+  reporter: 'html',
+
   // Maximum time one test can run for
   timeout: 45000,
 
